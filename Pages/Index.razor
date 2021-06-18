@@ -1,0 +1,28 @@
+﻿@page "/"
+@using System.Net
+@inject HttpClient HttpClient;
+
+<h1>CKAN Data Scraper</h1>
+
+<p class="lead">Paste your CKAN root URLs in the box below and click start to process them</p>
+
+<textarea @bind="CKANInput" class="form-control mb-3" rows="3"></textarea>
+
+<div class="d-flex justify-content-center">
+    <button class="btn btn-lg btn-primary" @onclick="StartScrape">Start</button>
+</div>
+
+@code
+{
+    public string CKANInput { get; set; }
+
+    private void StartScrape()
+    {
+        var splitLinks = CKANInput.Split("\n");
+
+        foreach (var ckanRootUrl in splitLinks)
+        {
+            var get = HttpClient.GetFromJsonAsync<string>(ckanRootUrl);
+        }
+    }
+}
