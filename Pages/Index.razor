@@ -10,23 +10,32 @@
 
 <h1>CKAN Data Scraper</h1>
 
-<p class="lead">Paste your CKAN root URLs in the box below and click start to process them</p>
+<p class="lead">Paste your CKAN root URLs in the box below (one per line) and click start to process them</p>
 
 <textarea @bind="CKANInput" class="form-control mb-3" rows="3"></textarea>
+
+<p>@StatusText</p>
 
 <div class="d-flex justify-content-center">
     <button class="btn btn-lg btn-primary" @onclick="StartScrape">Start</button>
 </div>
 
 
+
 @code
 {
     public string CKANInput { get; set; }
     public List<DatasetEntry> DatasetEntries { get; set; } = new();
+    public string StatusText;
 
+    private void Update(string message)
+    {
+        StatusText = message;
+    }
 
     private async Task StartScrape()
     {
+        StatusText = "";
         if (string.IsNullOrEmpty(CKANInput))
         {
             await JsRuntime.InvokeVoidAsync("alert", "No URLs detected!");
@@ -81,6 +90,11 @@
                 }
 
                 Console.WriteLine(packageMetadata.Title);
+
+                Update($"Processing dataset: {packageMetadata.Title}");
+
+                StateHasChanged();
+
                 foreach (var resource in packageMetadata.Resources)
                 {
                     var pageUrl = new UriBuilder(ckanRootUrl)
@@ -97,7 +111,7 @@
                         DateCreated = packageMetadata.DateCreated.HasValue ? packageMetadata.DateCreated.Value.ToString("yyyy-MM-dd") : "",
                         DateUpdated = packageMetadata.DateModified.HasValue ? packageMetadata.DateModified.Value.ToString("yyyy-MM-dd") : "",
                         FileSize = resource.Archiver != null ? resource.Archiver.Size.ToString() : "",
-                        FileSizeUnit = resource.Archiver != null ? "B": "",
+                        FileSizeUnit = resource.Archiver != null ? "B" : "",
                         FileType = resource.Format,
                         NumRecords = null,
                         OriginalTags = string.Join(';', packageMetadata.Tags.Select(x => x.Name)),
@@ -135,7 +149,7 @@
                     ByteArray = memoryStream.ToArray(),
                     FileName = "output.csv",
                     ContentType = "application/octet-stream"
-               });
+                });
         };
     }
 }

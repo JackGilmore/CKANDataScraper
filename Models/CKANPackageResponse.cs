@@ -20,13 +20,13 @@ namespace CKANDataScraper.Models
         public DateTime? DateModified { get; set; }
         [DataMember(Name = "metadata_modified")]
         public DateTime? DateCreated { get; set; }
-        [DataMember(Name = "Notes")]
+        [DataMember(Name = "notes")]
         public string Description { get; set; }
         [DataMember(Name = "license_title")]
         public string License { get; set; }
         [DataMember(Name = "tags")]
         public IEnumerable<CKANTag> Tags { get; set; }
-        [DataMember(Name = "Resources")]
+        [DataMember(Name = "resources")]
         public IEnumerable<CKANResource> Resources { get; set; }
     }
 }
